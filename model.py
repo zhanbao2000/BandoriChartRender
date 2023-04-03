@@ -1,6 +1,7 @@
-from typing import Optional
+from enum import Enum
+from typing import Optional, Annotated, Union, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Connection(BaseModel):
@@ -12,22 +13,64 @@ class Connection(BaseModel):
     skill: Optional[bool] = None
 
 
-class Note(BaseModel):
-    type: str
-    bpm: Optional[int] = None
-    beat: Optional[float] = None
-    data: Optional[str] = None
-    connections: Optional[list[Connection]] = None
-    lane: Optional[int] = None
-    direction: Optional[str] = None
-    width: Optional[int] = None
+class NoteType(str, Enum):
+    BPM = 'BPM'
+    System = 'System'
+    Single = 'Single'
+    Long = 'Long'
+    Directional = 'Directional'
+    Slide = 'Slide'
+
+
+class Direction(str, Enum):
+    Left = 'Left'
+    Right = 'Right'
+
+
+class BPM(BaseModel):
+    type: Literal[NoteType.BPM] = NoteType.BPM
+    bpm: int
+    beat: float
+
+
+class System(BaseModel):
+    type: Literal[NoteType.System] = NoteType.System
+    data: str
+    beat: float
+
+
+class Single(BaseModel):
+    type: Literal[NoteType.Single] = NoteType.Single
+    lane: int
+    beat: float
     skill: Optional[bool] = None
     flick: Optional[bool] = None
     charge: Optional[bool] = None
 
 
+class Long(BaseModel):
+    type: Literal[NoteType.Long] = NoteType.Long
+    connections: list[Connection]
+
+
+class Directional(BaseModel):
+    type: Literal[NoteType.Directional] = NoteType.Directional
+    beat: float
+    lane: int
+    direction: Direction
+    width: int
+
+
+class Slide(BaseModel):
+    type: Literal[NoteType.Slide] = NoteType.Slide
+    connections: list[Connection]
+
+
+NoteBase = Annotated[Union[BPM, System, Single, Long, Directional, Slide], Field(discriminator='type')]
+
+
 class Chart(BaseModel):
-    __root__: list[Note]
+    __root__: list[NoteBase]
 
 
 class Content(BaseModel):
