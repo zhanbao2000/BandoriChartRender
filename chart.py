@@ -166,4 +166,4 @@ def get_total_combo(note_list_single_directional: list[Union[Single, Directional
 def get_min_max_bpm(chart: Chart) -> tuple[float, float]:
     """Get the max and min BPM of a chart."""
     bpms = sorted(get_notes_for_type(chart, BPM), key=lambda bpm: bpm.bpm)
-    return bpms[-1].bpm, bpms[0].bpm
+    return bpms[0].bpm, bpms[-1].bpm
