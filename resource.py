@@ -1,7 +1,7 @@
-import math
 from io import BytesIO
+from math import ceil
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import parse_obj_as
 
@@ -96,14 +96,14 @@ async def get_band_official(band_id: int) -> str:
 
 
 def get_song_jacket_url_official(song_id: int, jacket_name: str) -> str:
-    jacket_pack_id = math.ceil(song_id / 10) * 10
+    jacket_pack_id = ceil(song_id / 10) * 10
 
     return (f'https://bestdori.com/'
             f'assets/jp/musicjacket/musicjacket{jacket_pack_id}_rip/'
             f'assets-star-forassetbundle-startapp-musicjacket-musicjacket{jacket_pack_id}-{jacket_name}-thumb.png')
 
 
-async def generate_song_meta_official(meta: BestdoriSongMeta, song_id: int, difficulty: Union[int, DifficultyInt]) -> ChartMeta:
+async def generate_song_meta_official(meta: BestdoriSongMeta, song_id: int, difficulty: DifficultyInt) -> ChartMeta:
     return ChartMeta(
         id=song_id,
         title=meta.musicTitle[Language.Japanese],
