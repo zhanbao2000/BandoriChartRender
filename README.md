@@ -43,7 +43,7 @@ io = im.to_bytes_io()  # get the image as a BytesIO object
 ```python
 from BandoriChartRender import render_chart_user_post
 
-im = await render_chart_user_post(song_id=103401)  # FlowerS ～となりで咲く花のように～
+im = await render_chart_user_post(post_id=103401)  # FlowerS ～となりで咲く花のように～
 
 im.show()  # show the image directly
 im.save('103401.png')  # save the image
