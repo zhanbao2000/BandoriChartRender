@@ -36,7 +36,7 @@ class FontResourceMangaer(object):
     font_a_otf_shingopro_medium_2 = assets / 'A-OTF-ShinGoPro-Medium-2.otf'
 
 
-async def get_chart_official(song_id: int, difficulty: int) -> Chart:
+async def get_chart_official(song_id: int, difficulty: DifficultyInt) -> Chart:
     async with get_client() as client:
         response = await client.get(f'https://bestdori.com/api/charts/{song_id}/{difficulty_literal[difficulty]}.json')
         response.raise_for_status()

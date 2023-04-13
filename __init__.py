@@ -1,3 +1,5 @@
+from typing import Union
+
 from .model import DifficultyInt
 from .render import Render
 from .resource import (
@@ -11,7 +13,7 @@ from .resource import (
 )
 
 
-async def render_chart_official(song_id: int, difficulty: DifficultyInt) -> Render:
+async def render_chart_official(song_id: int, difficulty: Union[DifficultyInt, int]) -> Render:
     chart = await get_chart_official(song_id, difficulty)
     song = await get_song_official(song_id)
     jacket = await get_song_jacket(get_song_jacket_url_official(song_id, song.jacketImage[0]))
