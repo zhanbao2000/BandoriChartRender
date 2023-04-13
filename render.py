@@ -401,9 +401,9 @@ class Render(object):
         font = self.theme.font_meta
         height_first_line = self.im.height - margin_song_jacket - height_song_jacket
         width_first_key_column = width_song_jacket + 2 * margin_song_jacket
-        width_first_value_column = width_first_key_column + font.getsize('Chart Designer ')[0]
+        width_first_value_column = width_first_key_column + font.getsize('Composer  ')[0]
         width_second_key_column = self.im.width // 2
-        width_second_value_column = width_second_key_column + font.getsize('Notes     ')[0]
+        width_second_value_column = width_second_key_column + font.getsize('Duration  ')[0]
         line_spacing = font.size * 1.4
 
         # title, artist, chart designer, lyricist, composer, arranger
@@ -417,7 +417,7 @@ class Render(object):
                       f'{self._meta.artist}', self.theme.meta_text_color, font=font)
         if self._meta.chart_designer:  # only for user post
             draw.text((width_first_key_column, height_first_line + line_spacing * 2),
-                      'Chart Designer', self.theme.meta_text_color, font=font)
+                      'Chart', self.theme.meta_text_color, font=font)
             draw.text((width_first_value_column, height_first_line + line_spacing * 2),
                       f'{self._meta.chart_designer}', self.theme.meta_text_color, font=font)
         if self._meta.lyricist:  # only for official
