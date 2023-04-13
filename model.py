@@ -108,9 +108,14 @@ class UserPost(BaseModel):
             type: str
 
         class Author(BaseModel):
+            class Title(BaseModel):
+                id: int
+                type: str
+                server: int
+
             username: str
             nickname: Optional[str]
-            titles: Optional[str]
+            titles: Optional[list[Title]]
 
         class Tag(BaseModel):
             type: str
