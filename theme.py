@@ -5,19 +5,20 @@ from PIL import ImageFont
 from .resource import FontResourceMangaer
 
 # size configuration
+# you can refer to the CAD files: chart_bar.dwg and chart_full.dwg
 
-width_divider = height_divider = 1  # width or height of bar divider, beat divider, and lane divider
+width_divider = height_divider = 1  # divider size of bar, beat, and lane
 width_simultaneous_line = 1  # width of simultaneous line
 width_lane = 14  # width of single lane
-width_track = width_lane * 7  # width of track
-width_track_outline = 7  # width of track outline (left of 0th lane or right of 6th lane)
-width_track_extra = 50  # width of comment area, on the left of the track
+width_track = width_lane * 7  # width of track, including 7 lanes
+width_track_outline = 7  # width of track outline (on the left side of the 0th and the right side of the 6th)
+width_track_extra = 50  # width of comment area, on the left of the track, used to write bar info, bpm changes, skill note and other info
 width_note_resize = width_lane + width_divider * 8  # width of note when resizing
-width_song_jacket = height_song_jacket = 240  # width and height of song jacket
+width_song_jacket = height_song_jacket = 240  # width and height of song jacket (square)
 
 height_beat = 96  # height of single beat
-height_bar = height_beat * 4  # height of single bar
-height_bar_extra = width_lane  # addtional area
+height_bar = height_beat * 4  # height of single bar, including 4 beats
+height_bar_extra = width_lane  # addtional area when cutting segment
 
 margin = width_lane  # margin of the image
 margin_song_jacket = margin * 2  # margin of song jacket
