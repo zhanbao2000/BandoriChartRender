@@ -51,11 +51,11 @@ class BaseTheme(ABC):
 
     meta_text_color = (255, 255, 255, 255)
     meta_difficulty_color = [
-        (48, 81, 250, 255),  # easy
-        (25, 183, 26, 255),  # normal
-        (255, 164, 27, 255),  # hard
-        (238, 62, 64, 255),  # expert
-        (239, 47, 156, 255),  # special
+        (48, 81, 250, 190),  # easy
+        (25, 183, 26, 190),  # normal
+        (255, 164, 27, 190),  # hard
+        (238, 62, 64, 190),  # expert
+        (239, 47, 156, 190),  # special
     ]
 
     font_comment_bpm = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 16)

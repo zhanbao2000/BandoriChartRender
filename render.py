@@ -378,17 +378,17 @@ class Render(object):
             self.im.height + 2 * margin + 2 * margin_song_jacket + height_song_jacket
         )
         bg = Image.open(IGRMngr.background).convert('RGBA')
-        bg_black_layer = Image.new('RGBA', bg_size, self.theme.track_background_color)
+        bg_layer = Image.new('RGBA', bg_size, self.theme.track_background_color)
         bg = bg.crop((0, 0, bg.width, bg.height // 2)).resize(bg_size)  # crop unwanted bottom part
 
-        bg.alpha_composite(bg_black_layer, (0, 0))
-        bg.alpha_composite(self.im, (margin, margin))
-
-        draw = ImageDraw.Draw(bg)
+        draw = ImageDraw.Draw(bg_layer)
         draw.rectangle(
             ((0, self.im.height + 2 * margin), (bg.width, bg.height)),
-            self.theme.meta_difficulty_color[self._meta.difficulty or 3]
+            self.theme.meta_difficulty_color[self._meta.difficulty or 3]  # default to Expert
         )
+
+        bg.alpha_composite(bg_layer, (0, 0))
+        bg.alpha_composite(self.im, (margin, margin))
 
         self.im = bg
 
