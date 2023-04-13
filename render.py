@@ -9,7 +9,7 @@ from .chart import (
     get_max_beat, get_notes_for_type, get_all_skill_notes, get_fever_command_tuple,
     is_note_should_black, is_note_skill, is_note_flick,
     pairwise,
-    get_grouped_notes_by_beat, get_time_elapsed, get_beat_elapsed, get_combo_before, get_min_max_bpm, get_total_combo,
+    get_grouped_notes_by_beat, get_time_elapsed, get_beat_elapsed, get_combo_before, get_min_max_bpm
 )
 from .model import Chart, Single, LaneLocated, Directional, Direction, Connection, BPM, Slide, Command, ChartMeta
 from .resource import InGameResourceManager as IGRMngr
@@ -93,6 +93,8 @@ class Render(object):
         self._cached_single_directional_list = list(get_notes_for_type(self._chart, (Single, Directional)))
         self._cached_slide_list = list(get_notes_for_type(self._chart, Slide))
         self._cached_command_list = list(get_notes_for_type(self._chart, Command))
+        self._cached_duration: float = 0
+        self._cached_combo: float = 0
 
     def _render(self):
         self.theme = BaseTheme
@@ -178,17 +180,15 @@ class Render(object):
         bar_count = ceil(self._last_beat / 4)
 
         for bar in range(bar_count):
-            # time elapsed
-            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra)),
-                      second_to_sexagesimal(get_time_elapsed(self._cached_bpm_list, bar * 4)),
-                      fill=self.theme.time_color, anchor='rs', font=font)
-            # combo
-            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra * 2)),
-                      str(get_combo_before(bar * 4, self._cached_single_directional_list, self._cached_slide_list)),
-                      fill=self.theme.time_color, anchor='rs', font=font)
-            # bar count
+            self._cached_duration = duration = get_time_elapsed(self._cached_bpm_list, bar * 4)
+            self._cached_combo = combo = get_combo_before(bar * 4, self._cached_single_directional_list, self._cached_slide_list)
+
+            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra)), second_to_sexagesimal(duration),
+                      fill=self.theme.time_color, anchor='rs', font=font)  # time elapsed
+            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra * 2)), str(combo),
+                      fill=self.theme.time_color, anchor='rs', font=font)  # combo
             draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra * 3)), f'[{bar}]',
-                      fill=self.theme.time_color, anchor='rs', font=font)
+                      fill=self.theme.time_color, anchor='rs', font=font)  # bar count
 
     def _draw_and_comment_skill(self):
         draw = ImageDraw.Draw(self.im)
@@ -407,6 +407,7 @@ class Render(object):
         line_spacing = font.size * 1.4
 
         # title, artist, chart designer, lyricist, composer, arranger
+
         draw.text((width_first_key_column, height_first_line - line_spacing * 0.2),
                   f'[{self._meta.id}] {self._meta.title}', self.theme.meta_text_color, font=self.theme.font_meta_title)
         if self._meta.artist:  # both official and user post
@@ -435,10 +436,11 @@ class Render(object):
             draw.text((width_first_value_column, height_first_line + line_spacing * 4),
                       f'{self._meta.arranger}', self.theme.meta_text_color, font=font)
 
-        # level, bpm, notes, duration
+        # level, bpm, notes, duration, note per second
+
         min_bpm, max_bpm = get_min_max_bpm(self._cached_bpm_list)
         bpm_literal = f'{min_bpm} - {max_bpm}' if min_bpm != max_bpm else f'{min_bpm}'
-        total_notes = self._meta.total_notes or get_total_combo(self._cached_single_directional_list, self._cached_slide_list)
+
         draw.text((width_second_key_column, height_first_line),
                   'Level', self.theme.meta_text_color, font=font)
         draw.text((width_second_value_column, height_first_line),
@@ -451,7 +453,15 @@ class Render(object):
         draw.text((width_second_key_column, height_first_line + line_spacing * 2),
                   'Notes', self.theme.meta_text_color, font=font)
         draw.text((width_second_value_column, height_first_line + line_spacing * 2),
-                  f'{total_notes}', self.theme.meta_text_color, font=font)
+                  f'{self._cached_combo}', self.theme.meta_text_color, font=font)
+        draw.text((width_second_key_column, height_first_line + line_spacing * 3),
+                  'Duration', self.theme.meta_text_color, font=font)
+        draw.text((width_second_value_column, height_first_line + line_spacing * 3),
+                  f'{second_to_sexagesimal(self._cached_duration)}', self.theme.meta_text_color, font=font)
+        draw.text((width_second_key_column, height_first_line + line_spacing * 4),
+                  'NPS', self.theme.meta_text_color, font=font)
+        draw.text((width_second_value_column, height_first_line + line_spacing * 4),
+                  f'{self._cached_combo / self._cached_duration:.2f}', self.theme.meta_text_color, font=font)
 
     def _post_processing_add_slogan(self):
         draw = ImageDraw.Draw(self.im)

@@ -151,18 +151,6 @@ def get_combo_before(beat: float, note_list_single_directional: list[Union[Singl
     return result
 
 
-def get_total_combo(note_list_single_directional: list[Union[Single, Directional]], note_list_slide: list[Slide]) -> int:
-    """Get the total combo of a chart."""
-    return (
-            len(note_list_single_directional) +
-            sum(
-                not connection.hidden
-                for slide in note_list_slide
-                for connection in slide.connections
-            )
-    )
-
-
 def get_min_max_bpm(bpms: list[BPM]) -> tuple[float, float]:
     """Get the max and min BPM of a chart."""
     bpms = sorted(bpms, key=lambda bpm: bpm.bpm)

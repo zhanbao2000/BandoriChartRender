@@ -89,7 +89,6 @@ class ChartMeta(BaseModel):
     difficulty: Optional[DifficultyInt]
     release: datetime.datetime
     is_official: bool
-    total_notes: Optional[int] = None  # only for official
     artist: Optional[str] = None  # band or singer
     chart_designer: Optional[str] = None  # only for user post
     lyricist: Optional[str] = None  # only for official
