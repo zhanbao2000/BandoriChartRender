@@ -1,7 +1,7 @@
 from io import BytesIO
 from math import ceil
 from pathlib import Path
-from typing import Optional
+from typing import TypeVar
 
 from pydantic import parse_obj_as
 
@@ -12,6 +12,7 @@ difficulty_literal = ['easy', 'normal', 'hard', 'expert', 'special']
 assets = Path(__file__).parent / 'assets'
 cached_songs: dict[int, BestdoriSongMeta] = {}  # song_id: song
 cached_bands: dict[int, str] = {}  # band_id: band_name
+_T = TypeVar('_T')
 
 
 class InGameResourceManager(object):
@@ -73,13 +74,13 @@ async def get_song_official(song_id: int) -> BestdoriSongMeta:
     return cached_songs[song_id]
 
 
-def get_band_name_from_list(band_name_list: list[str]) -> Optional[str]:
+def get_valid_value_from_list(value_list: list[_T]) -> _T:
     return (
-            band_name_list[Language.Japanese] or
-            band_name_list[Language.ChineseSimplified] or
-            band_name_list[Language.ChineseTraditional] or
-            band_name_list[Language.English] or
-            band_name_list[Language.Korean]
+            value_list[Language.Japanese] or
+            value_list[Language.ChineseSimplified] or
+            value_list[Language.ChineseTraditional] or
+            value_list[Language.English] or
+            value_list[Language.Korean]
     )
 
 
@@ -92,30 +93,37 @@ async def get_band_official(band_id: int) -> str:
         response.raise_for_status()
 
     bands = parse_obj_as(Bands, response.json()).__root__
-    cached_bands.update({_band_id: get_band_name_from_list(_band_name_list.bandName) for _band_id, _band_name_list in bands.items()})
+    cached_bands.update({_band_id: get_valid_value_from_list(_band_name_list.bandName) for _band_id, _band_name_list in bands.items()})
     return cached_bands[band_id]
 
 
 def get_song_jacket_url_official(song_id: int, jacket_name: str) -> str:
     jacket_pack_id = ceil(song_id / 10) * 10
 
+    if 1000 <= song_id < 10001:  # 1000, 1001, 1004 is EN exclusive
+        server = 'en'
+    elif 10001 <= song_id:  # 10001 is CN exclusive
+        server = 'cn'
+    else:
+        server = 'jp'
+
     return (f'https://bestdori.com/'
-            f'assets/jp/musicjacket/musicjacket{jacket_pack_id}_rip/'
+            f'assets/{server}/musicjacket/musicjacket{jacket_pack_id}_rip/'
             f'assets-star-forassetbundle-startapp-musicjacket-musicjacket{jacket_pack_id}-{jacket_name}-thumb.png')
 
 
 async def generate_song_meta_official(meta: BestdoriSongMeta, song_id: int, difficulty: DifficultyInt) -> ChartMeta:
     return ChartMeta(
         id=song_id,
-        title=meta.musicTitle[Language.Japanese],
+        title=get_valid_value_from_list(meta.musicTitle),
         level=meta.difficulty[difficulty].playLevel,
         difficulty=DifficultyInt(difficulty),
-        release=meta.publishedAt[Language.Japanese],
+        release=get_valid_value_from_list(meta.publishedAt),
         is_official=True,
         artist=await get_band_official(meta.bandId),
-        lyricist=meta.lyricist[Language.Japanese],
-        composer=meta.composer[Language.Japanese],
-        arranger=meta.arranger[Language.Japanese],
+        lyricist=get_valid_value_from_list(meta.lyricist),
+        composer=get_valid_value_from_list(meta.composer),
+        arranger=get_valid_value_from_list(meta.arranger),
     )
 
 
