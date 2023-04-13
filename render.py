@@ -179,21 +179,16 @@ class Render(object):
 
         for bar in range(bar_count):
             # time elapsed
-            draw.text(
-                self._locate_comment(bar * 4, (-5, height_bar_extra)), second_to_sexagesimal(get_time_elapsed(self._cached_bpm_list, bar * 4)),
-                fill=self.theme.time_color, anchor='rs', font=font
-            )
+            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra)),
+                      second_to_sexagesimal(get_time_elapsed(self._cached_bpm_list, bar * 4)),
+                      fill=self.theme.time_color, anchor='rs', font=font)
             # combo
-            draw.text(
-                self._locate_comment(bar * 4, (-5, height_bar_extra * 2)),
-                str(get_combo_before(bar * 4, self._cached_single_directional_list, self._cached_slide_list)),
-                fill=self.theme.time_color, anchor='rs', font=font
-            )
+            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra * 2)),
+                      str(get_combo_before(bar * 4, self._cached_single_directional_list, self._cached_slide_list)),
+                      fill=self.theme.time_color, anchor='rs', font=font)
             # bar count
-            draw.text(
-                self._locate_comment(bar * 4, (-5, height_bar_extra * 3)), f'[{bar}]',
-                fill=self.theme.time_color, anchor='rs', font=font
-            )
+            draw.text(self._locate_comment(bar * 4, (-5, height_bar_extra * 3)), f'[{bar}]',
+                      fill=self.theme.time_color, anchor='rs', font=font)
 
     def _draw_and_comment_skill(self):
         draw = ImageDraw.Draw(self.im)
@@ -276,10 +271,8 @@ class Render(object):
             if len(notes) == 1:
                 continue
             for note1, note2 in pairwise(notes):  # some fan-made charts have more than 2 notes in a beat (?)
-                draw.line(
-                    (self._locate_note(note1, offset), self._locate_note(note2, offset)),
-                    fill=self.theme.simultaneous_line_color, width=width_simultaneous_line
-                )
+                draw.line((self._locate_note(note1, offset), self._locate_note(note2, offset)),
+                          fill=self.theme.simultaneous_line_color, width=width_simultaneous_line)
 
         self.im.alpha_composite(im_simultaneous_line)
 
@@ -325,7 +318,9 @@ class Render(object):
                 factor = 1
 
             for width in range(directional.width):
-                self.im.alpha_composite(im_directional, self._locate_note_with_size(directional, im_directional, (width * width_lane * factor, 0)))
+                self.im.alpha_composite(im_directional, self._locate_note_with_size(
+                    directional, im_directional, (width * width_lane * factor, 0)
+                ))
 
             self.im.alpha_composite(im_directional_top, self._locate_note_with_size(
                 directional, im_directional_top,
