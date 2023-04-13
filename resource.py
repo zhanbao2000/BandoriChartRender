@@ -17,6 +17,7 @@ cached_bands: dict[int, str] = {}  # band_id: band_name
 class InGameResourceManager(object):
     background = assets / 'liveBG_normal.png'
     default_jacket = assets / 'default_jacket.png'
+
     normal = assets / 'note_normal_3.png'
     normal_16 = assets / 'note_normal_16_3.png'
     skill = assets / 'note_skill_3.png'
@@ -39,14 +40,14 @@ async def get_chart_official(song_id: int, difficulty: int) -> Chart:
     async with get_client() as client:
         response = await client.get(f'https://bestdori.com/api/charts/{song_id}/{difficulty_literal[difficulty]}.json')
         response.raise_for_status()
-        return parse_obj_as(Chart, response.json())
+    return parse_obj_as(Chart, response.json())
 
 
 async def get_chart_user_post(post_id: int) -> UserPost:
     async with get_client() as client:
         response = await client.get(f'https://bestdori.com/api/post/details?id={post_id}')
         response.raise_for_status()
-        return UserPost(**response.json())
+    return UserPost(**response.json())
 
 
 async def get_song_jacket(url: str) -> BytesIO:
@@ -54,7 +55,7 @@ async def get_song_jacket(url: str) -> BytesIO:
         async with get_client() as client:
             response = await client.get(url)
             response.raise_for_status()
-            return BytesIO(response.content)
+        return BytesIO(response.content)
     except Exception:  # noqa
         with open(InGameResourceManager.default_jacket, 'rb') as f:
             return BytesIO(f.read())
