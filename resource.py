@@ -132,6 +132,7 @@ def generate_song_meta_user_post(post: UserPost.Post, post_id: int) -> ChartMeta
         id=post_id,
         title=post.title,
         level=post.level,
+        difficulty=DifficultyInt(post.diff),
         release=post.time,
         is_official=False,
         artist=post.artists,

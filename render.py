@@ -384,7 +384,7 @@ class Render(object):
         draw = ImageDraw.Draw(bg_layer)
         draw.rectangle(
             ((0, self.im.height + 2 * margin), (bg.width, bg.height)),
-            self.theme.meta_difficulty_color[self._meta.difficulty or 3]  # default to Expert
+            self.theme.meta_difficulty_color[self._meta.difficulty]
         )
 
         bg.alpha_composite(bg_layer, (0, 0))
@@ -444,8 +444,7 @@ class Render(object):
         draw.text((width_second_key_column, height_first_line),
                   'Level', self.theme.meta_text_color, font=font)
         draw.text((width_second_value_column, height_first_line),
-                  f'[{self._meta.difficulty.name}] {self._meta.level}' if self._meta.is_official else f'[Fan-Made] {self._meta.level}',
-                  self.theme.meta_text_color, font=font)
+                  f'[{self._meta.difficulty.name}] {self._meta.level}', self.theme.meta_text_color, font=font)
         draw.text((width_second_key_column, height_first_line + line_spacing * 1),
                   'BPM', self.theme.meta_text_color, font=font)
         draw.text((width_second_value_column, height_first_line + line_spacing * 1),

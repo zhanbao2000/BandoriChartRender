@@ -86,7 +86,7 @@ class ChartMeta(BaseModel):
     id: int  # song_id or post_id
     title: str
     level: int
-    difficulty: Optional[DifficultyInt]
+    difficulty: DifficultyInt
     release: datetime.datetime
     is_official: bool
     artist: Optional[str] = None  # band or singer
