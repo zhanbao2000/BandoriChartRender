@@ -441,7 +441,7 @@ class Render(object):
                       f'{self._meta.arranger}', self.theme.meta_text_color, font=font)
 
         # level, bpm, notes, duration
-        min_bpm, max_bpm = get_min_max_bpm(self._chart)
+        min_bpm, max_bpm = get_min_max_bpm(self._cached_bpm_list)
         bpm_literal = f'{min_bpm} - {max_bpm}' if min_bpm != max_bpm else f'{min_bpm}'
         total_notes = self._meta.total_notes or get_total_combo(self._cached_single_directional_list, self._cached_slide_list)
         draw.text((width_second_key_column, height_first_line),
