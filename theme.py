@@ -14,7 +14,7 @@ width_track = width_lane * 7  # width of track, including 7 lanes
 width_track_outline = 7  # width of track outline (on the left side of the 0th and the right side of the 6th)
 width_track_extra = 50  # width of comment area, on the left of the track, used to write bar info, bpm changes, skill note and other info
 width_note_resize = width_lane + width_divider * 8  # width of note when resizing
-width_song_jacket = height_song_jacket = 240  # width and height of song jacket (square)
+width_song_jacket = height_song_jacket = 180  # width and height of song jacket (square)
 
 height_beat = 96  # height of single beat
 height_bar = height_beat * 4  # height of single bar, including 4 beats
@@ -61,6 +61,6 @@ class BaseTheme(ABC):
     font_comment_bpm = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 16)
     font_comment_bar = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 12)
     font_comment_skill_fever = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 14)
-    font_meta = ImageFont.truetype(str(FontResourceMangaer.font_a_otf_shingopro_medium_2), 36)
-    font_meta_title = ImageFont.truetype(str(FontResourceMangaer.font_a_otf_shingopro_medium_2), 42)
-    font_slogan = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 36)
+    font_meta = ImageFont.truetype(str(FontResourceMangaer.font_a_otf_shingopro_medium_2), 27)
+    font_meta_title = ImageFont.truetype(str(FontResourceMangaer.font_a_otf_shingopro_medium_2), 32)
+    font_slogan = ImageFont.truetype(str(FontResourceMangaer.font_arial_bd), 20)
