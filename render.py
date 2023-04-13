@@ -82,8 +82,8 @@ class Render(object):
 
         # round up to an integer multiple of 4, and an extra 1 bar
         self._last_beat = ceil(get_max_beat(chart) / 4 + 1) * 4
-        self._h = height_beat * self._last_beat + height_bar_extra * 2
-        self._w = width_track_extra + width_track + width_divider + width_track_outline
+        self._h_single_column = height_beat * self._last_beat + height_bar_extra * 2
+        self._w_single_column = width_track_extra + width_track + width_divider + width_track_outline
 
         self._cache()
         self._render()
@@ -96,7 +96,7 @@ class Render(object):
 
     def _render(self):
         self.theme = BaseTheme
-        self.im = Image.new('RGBA', (self._w, self._h), self.theme.transparent_color)
+        self.im = Image.new('RGBA', (self._w_single_column, self._h_single_column), self.theme.transparent_color)
 
         self._comment_bpm_changing()
         self._comment_bar()
@@ -122,7 +122,7 @@ class Render(object):
         """Locate the exact position of this note on the image based on its lane value."""
         return (
             int(width_track_extra + width_divider + width_lane * note.lane + width_lane / 2) + offset[0],
-            get_height_from_cartesian(self._h, height_bar_extra - height_divider + height_beat * note.beat, offset[1])
+            get_height_from_cartesian(self._h_single_column, height_bar_extra - height_divider + height_beat * note.beat, offset[1])
         )
 
     def _locate_note_with_size(self, note: LaneLocated, note_image: Image.Image, offset: tuple[int, int] = (0, 0)) -> tuple[int, int]:
@@ -137,8 +137,8 @@ class Render(object):
         """Locate the exact position of the parallelogram in the image based on the lane value at the start and end of the slide."""
         x1 = int(width_track_extra + width_lane * start.lane)
         x2 = int(width_track_extra + width_lane * end.lane)
-        y1 = get_height_from_cartesian(self._h, height_bar_extra + height_beat * start.beat)
-        y2 = get_height_from_cartesian(self._h, height_bar_extra + height_beat * end.beat)
+        y1 = get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * start.beat)
+        y2 = get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * end.beat)
         return [
             (x1 + offset[0], y1 + offset[1]),
             (x2 + offset[0], y2 + offset[1]),
@@ -150,16 +150,16 @@ class Render(object):
         """Locate comment text position."""
         return (
             int(width_track_extra) + offset[0],
-            get_height_from_cartesian(self._h, height_bar_extra + height_divider + height_beat * beat + offset[1])
+            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_divider + height_beat * beat + offset[1])
         )
 
     def _locate_layer(self, beat_start: float, beat_end: float, offset: tuple[int, int] = (0, 0)) -> tuple[int, int, int, int]:
         """Locate layer rectangle position."""
         return (
             int(width_track_extra) + offset[0],
-            get_height_from_cartesian(self._h, height_bar_extra + height_beat * beat_start + offset[1]),
+            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_start + offset[1]),
             int(width_track_extra + width_track) + offset[0],
-            get_height_from_cartesian(self._h, height_bar_extra + height_beat * beat_end + offset[1])
+            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_end + offset[1])
         )
 
     def _comment_bpm_changing(self):
@@ -222,7 +222,7 @@ class Render(object):
                       fill=self.theme.skill_color, anchor='rs', font=self.theme.font_comment_skill_fever)
 
     def _draw_and_comment_fever(self):
-        im_fever = Image.new('RGBA', (self._w, self._h), color=self.theme.transparent_color)
+        im_fever = Image.new('RGBA', (self._w_single_column, self._h_single_column), color=self.theme.transparent_color)
         draw = ImageDraw.Draw(im_fever)
         if all(fevers := get_fever_command_tuple(self._cached_command_list)):
             fever_ready, fever_start, fever_end = fevers
@@ -250,11 +250,11 @@ class Render(object):
         # lane divider
         for offset in range(8):
             x1 = x2 = width_track_extra + offset * width_lane
-            draw.line((x1, 0, x2, self._h), fill=self.theme.divider_lane_color)
+            draw.line((x1, 0, x2, self._h_single_column), fill=self.theme.divider_lane_color)
 
         # beat divider
         for offset in range(self._last_beat + 1):
-            x2 = self._w - width_track_outline - width_divider
+            x2 = self._w_single_column - width_track_outline - width_divider
             y1 = y2 = height_bar_extra + offset * height_beat
             draw.line((width_track_extra, y1, x2, y2), fill=self.theme.divider_beat_color)
 
@@ -262,7 +262,7 @@ class Render(object):
         for offset in range(self._last_beat // 4 + 1):
             x1 = width_track_extra - width_track_outline
             y1 = y2 = height_bar_extra + offset * height_bar
-            draw.line((x1, y1, self._w, y2), fill=self.theme.divider_bar_color)
+            draw.line((x1, y1, self._w_single_column, y2), fill=self.theme.divider_bar_color)
 
         self.im.alpha_composite(im_divider)
 
@@ -365,15 +365,15 @@ class Render(object):
     def _post_processing_segment(self):
         segment_count = ceil(self._last_beat / 16)
         segment_height = height_bar * 4
-        size = (self._w * segment_count, segment_height + height_bar_extra * 2)
+        size = (self._w_single_column * segment_count, segment_height + height_bar_extra * 2)
         im_tiled_segments = Image.new('RGBA', size, self.theme.transparent_color)
 
         for i in range(segment_count):
             box = (
-                0, get_height_from_cartesian(self._h, (i + 1) * segment_height + height_bar_extra * 2),
-                self._w, get_height_from_cartesian(self._h, i * segment_height)
+                0, get_height_from_cartesian(self._h_single_column, (i + 1) * segment_height + height_bar_extra * 2),
+                self._w_single_column, get_height_from_cartesian(self._h_single_column, i * segment_height)
             )
-            im_tiled_segments.alpha_composite(self.im.crop(box), (i * self._w, 0))
+            im_tiled_segments.alpha_composite(self.im.crop(box), (i * self._w_single_column, 0))
 
         self.im = im_tiled_segments
 
