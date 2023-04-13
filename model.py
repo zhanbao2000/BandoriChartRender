@@ -122,8 +122,8 @@ class UserPost(BaseModel):
 
         class Song(BaseModel):
             type: str
-            audio: str
-            cover: str
+            audio: Optional[str]
+            cover: Optional[str]
 
         categoryName: str
         categoryId: str
