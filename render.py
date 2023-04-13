@@ -402,7 +402,7 @@ class Render(object):
         height_first_line = self.im.height - margin_song_jacket - height_song_jacket
         width_first_key_column = width_song_jacket + 2 * margin_song_jacket
         width_first_value_column = width_first_key_column + font.getsize('Chart Designer ')[0]
-        width_second_key_column = width_first_key_column + self.im.width // 2
+        width_second_key_column = self.im.width // 2
         width_second_value_column = width_second_key_column + font.getsize('Notes     ')[0]
         line_spacing = font.size * 1.4
 
