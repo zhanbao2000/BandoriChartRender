@@ -212,7 +212,7 @@ class BestdoriSongMeta(BaseModel):
 class Bands(BaseModel):
     """
     https://bestdori.com/api/bands/all.1.json
-    copid from package bestdori
+    copied from package bestdori
     """
 
     class BandName(BaseModel):
