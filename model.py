@@ -147,7 +147,7 @@ class UserPost(BaseModel):
 class BestdoriSongMeta(BaseModel):
     """
     https://bestdori.com/api/songs/359.json
-    copid from package bestdori
+    copied from package bestdori
     """
 
     class Tag(str, Enum):
