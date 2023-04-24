@@ -38,6 +38,8 @@ im.save('487_4.png')  # save the image
 io = im.to_bytes_io()  # get the image as a BytesIO object
 ```
 
+![487_4.png](assets/example/487_4.png)
+
 ### Render community chart (fan-made chart on [bestdori.com](https://bestdori.com/))
 
 ```python
@@ -49,6 +51,8 @@ im.show()  # show the image directly
 im.save('103401.png')  # save the image
 io = im.to_bytes_io()  # get the image as a BytesIO object
 ```
+
+![103401.png](assets/example/103401.png)
 
 ## Related
 
