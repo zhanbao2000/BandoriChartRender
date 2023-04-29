@@ -138,12 +138,12 @@ def get_combo_before(beat: float, note_list_single_directional: list[Union[Singl
 
     # Single, Directional
     result += sum(
-        single_or_directional.beat < beat
+        single_or_directional.beat <= beat
         for single_or_directional in note_list_single_directional
     )
     # Slide
     result += sum(
-        connection.beat < beat
+        connection.beat <= beat
         for slide in note_list_slide
         for connection in slide.connections if not connection.hidden
     )
