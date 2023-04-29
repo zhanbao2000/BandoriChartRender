@@ -134,16 +134,24 @@ def get_beat_elapsed(bpms: list[BPM], time: float) -> float:
 
 def get_combo_before(beat: float, note_list_single_directional: list[Union[Single, Directional]], note_list_slide: list[Slide]) -> int:
     """Get the total combo before given beat."""
+    return get_combo_between(0, beat, note_list_single_directional, note_list_slide)
+
+
+def get_combo_between(
+        beat_start: float, beat_end: float,
+        note_list_single_directional: list[Union[Single, Directional]], note_list_slide: list[Slide]
+) -> int:
+    """Get the total combo between given beats. Include both ends."""
     result = 0
 
     # Single, Directional
     result += sum(
-        single_or_directional.beat <= beat
+        beat_start <= single_or_directional.beat <= beat_end
         for single_or_directional in note_list_single_directional
     )
     # Slide
     result += sum(
-        connection.beat <= beat
+        beat_start <= connection.beat <= beat_end
         for slide in note_list_slide
         for connection in slide.connections if not connection.hidden
     )

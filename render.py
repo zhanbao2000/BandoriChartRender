@@ -9,7 +9,7 @@ from .chart import (
     get_max_beat, get_notes_for_type, get_all_skill_notes, get_fever_command_tuple,
     is_note_should_black, is_note_skill, is_note_flick,
     pairwise,
-    get_grouped_notes_by_beat, get_time_elapsed, get_beat_elapsed, get_combo_before, get_min_max_bpm
+    get_grouped_notes_by_beat, get_time_elapsed, get_beat_elapsed, get_combo_before, get_combo_between, get_min_max_bpm
 )
 from .model import Chart, Single, LaneLocated, Directional, Direction, Connection, BPM, Slide, Command, ChartMeta
 from .resource import InGameResourceManager as IGRMngr
@@ -164,6 +164,10 @@ class Render(object):
             get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_end + offset[1])
         )
 
+    def _calc_skill_coverage_rate(self, beat_start: float, beat_end: float) -> float:
+        """Calc skill coverage rate"""
+        return get_combo_between(beat_start, beat_end, self._cached_single_directional_list, self._cached_slide_list) / self._cached_combo
+
     def _comment_bpm_changing(self):
         draw = ImageDraw.Draw(self.im)
         font = self.theme.font_comment_bpm
@@ -192,6 +196,7 @@ class Render(object):
 
     def _draw_and_comment_skill(self):
         draw = ImageDraw.Draw(self.im)
+        font = self.theme.font_comment_skill_fever
 
         for index, note in enumerate(get_all_skill_notes(self._chart)):
             beat_start = note.beat
@@ -199,6 +204,10 @@ class Render(object):
             beat_end_5 = get_beat_elapsed(self._cached_bpm_list, beat_start_time + 5)
             beat_end_7 = get_beat_elapsed(self._cached_bpm_list, beat_start_time + 7)
             beat_end_8 = get_beat_elapsed(self._cached_bpm_list, beat_start_time + 8)
+
+            coverage_rate_5 = self._calc_skill_coverage_rate(beat_start, beat_end_5) * 100
+            coverage_rate_7 = self._calc_skill_coverage_rate(beat_start, beat_end_7) * 100
+            coverage_rate_8 = self._calc_skill_coverage_rate(beat_start, beat_end_8) * 100
 
             draw.rectangle((self._locate_layer(beat_start, beat_end_5)),
                            fill=self.theme.skill_layer_fill_color, outline=self.theme.skill_layer_outline_color)
@@ -208,13 +217,13 @@ class Render(object):
                            fill=self.theme.skill_layer_fill_color, outline=self.theme.skill_layer_outline_color)
 
             draw.text(self._locate_comment(beat_start, (-5, 0)), f'#{index + 1}',
-                      fill=self.theme.skill_color, anchor='rs', font=self.theme.font_comment_skill_fever)
-            draw.text(self._locate_comment(beat_end_5, (-5, 0)), f'#{index + 1} +5s',
-                      fill=self.theme.skill_color, anchor='rs', font=self.theme.font_comment_skill_fever)
-            draw.text(self._locate_comment(beat_end_7, (-5, 0)), f'#{index + 1} +7s',
-                      fill=self.theme.skill_color, anchor='rs', font=self.theme.font_comment_skill_fever)
-            draw.text(self._locate_comment(beat_end_8, (-5, 0)), f'#{index + 1} +8s',
-                      fill=self.theme.skill_color, anchor='rs', font=self.theme.font_comment_skill_fever)
+                      fill=self.theme.skill_color, anchor='rs', font=font)
+            draw.text(self._locate_comment(beat_end_5, (-5, 0)), f'#{index + 1} +5s\n{coverage_rate_5:.1f}%',
+                      fill=self.theme.skill_color, anchor='rs', font=font)
+            draw.text(self._locate_comment(beat_end_7, (-5, 0)), f'#{index + 1} +7s\n{coverage_rate_7:.1f}%',
+                      fill=self.theme.skill_color, anchor='rs', font=font)
+            draw.text(self._locate_comment(beat_end_8, (-5, 0)), f'#{index + 1} +8s\n{coverage_rate_8:.1f}%',
+                      fill=self.theme.skill_color, anchor='rs', font=font)
 
     def _draw_and_comment_fever(self):
         im_fever = Image.new('RGBA', (self._w_single_column, self._h_single_column), color=self.theme.transparent_color)
