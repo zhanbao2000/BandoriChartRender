@@ -159,9 +159,9 @@ class Render(object):
         """Locate layer rectangle position."""
         return (
             int(width_track_extra) + offset[0],
-            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_start + offset[1]),
+            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_end + offset[1]),
             int(width_track_extra + width_track) + offset[0],
-            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_end + offset[1])
+            get_height_from_cartesian(self._h_single_column, height_bar_extra + height_beat * beat_start + offset[1])
         )
 
     def _calc_skill_coverage_rate(self, beat_start: float, beat_end: float) -> float:
