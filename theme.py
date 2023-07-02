@@ -30,7 +30,7 @@ flick_directional_offset_x, flick_directional_offset_y = (-5, 0)
 
 class BaseTheme(ABC):
     transparent_color = (255, 255, 255, 0)
-    track_background_color = (0, 0, 0, 190)
+    track_background_color = (0, 0, 0, 220)
 
     divider_lane_color = divider_beat_color = (51, 255, 255, 100)
     divider_bar_color = (204, 255, 255, 210)
